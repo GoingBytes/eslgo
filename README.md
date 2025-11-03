@@ -1,5 +1,7 @@
 # eslgo
 
+[![Go](https://github.com/GoingBytes/eslgo/actions/workflows/go.yml/badge.svg)](https://github.com/GoingBytes/eslgo/actions/workflows/go.yml)
+
 `eslgo` is an idiomatic [FreeSWITCH™](https://freeswitch.com/) Event Socket Library for Go. It powers high-volume production systems and provides the primitives needed to originate calls, react to FreeSWITCH events, and build resilient telephony workflows from Go applications.
 
 ## Features
