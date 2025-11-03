@@ -13,9 +13,10 @@ package eslgo
 import (
 	"context"
 	"fmt"
-	"github.com/percipia/eslgo/command"
 	"net"
 	"time"
+
+	"github.com/percipia/eslgo/command"
 )
 
 // InboundOptions - Used to dial a new inbound ESL connection to FreeSWITCH
@@ -64,7 +65,7 @@ func (opts InboundOptions) Dial(address string) (*Conn, error) {
 		}
 		return nil, err
 	} else {
-		connection.logger.Info("Successfully authenticated %s\n", connection.conn.RemoteAddr())
+		connection.logger.Infof("Successfully authenticated %s\n", connection.conn.RemoteAddr())
 	}
 
 	// Inbound only handlers
@@ -95,12 +96,12 @@ func (c *Conn) authLoop(auth command.Auth, authTimeout time.Duration) {
 			err := c.doAuth(authCtx, auth)
 			cancel()
 			if err != nil {
-				c.logger.Warn("Failed to auth %e\n", err)
+				c.logger.Warnf("Failed to auth %e\n", err)
 				// Close the connection, we have the wrong password
 				c.ExitAndClose()
 				return
 			} else {
-				c.logger.Info("Successfully authenticated %s\n", c.conn.RemoteAddr())
+				c.logger.Infof("Successfully authenticated %s\n", c.conn.RemoteAddr())
 			}
 		case <-c.runningContext.Done():
 			return

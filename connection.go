@@ -277,7 +277,7 @@ func (c *Conn) eventLoop() {
 		c.responseChanMutex.RUnlock()
 
 		if err != nil {
-			c.logger.Warn("Error parsing event\n%s\n", err.Error())
+			c.logger.Warnf("Error parsing event\n%s\n", err.Error())
 			continue
 		}
 
@@ -289,7 +289,7 @@ func (c *Conn) receiveLoop() {
 	for c.runningContext.Err() == nil {
 		err := c.doMessage()
 		if err != nil {
-			c.logger.Warn("Error receiving message: %s\n", err.Error())
+			c.logger.Warnf("Error receiving message: %s\n", err.Error())
 			break
 		}
 	}
@@ -322,7 +322,7 @@ func (c *Conn) doMessage() error {
 			return c.runningContext.Err()
 		case <-ctx.Done():
 			// Do not return an error since this is not fatal but log since it could be a indication of problems
-			c.logger.Warn("No one to handle response\nIs the connection overloaded or stopping?\n%v\n\n", response)
+			c.logger.Warnf("No one to handle response\nIs the connection overloaded or stopping?\n%v\n\n", response)
 		}
 	} else {
 		return errors.New("no response channel for Content-Type: " + response.GetHeader("Content-Type"))

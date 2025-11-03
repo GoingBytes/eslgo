@@ -60,7 +60,7 @@ func readPlainEvent(body []byte) (*Event, error) {
 }
 
 // TODO: Needs processing
-func readXMLEvent(body []byte) (*Event, error) {
+func readXMLEvent(_ []byte) (*Event, error) {
 	return &Event{
 		Headers: make(textproto.MIMEHeader),
 	}, nil
@@ -70,6 +70,7 @@ func readXMLEvent(body []byte) (*Event, error) {
 func readJSONEvent(body []byte) (*Event, error) {
 	return &Event{
 		Headers: make(textproto.MIMEHeader),
+		Body:    body,
 	}, nil
 }
 

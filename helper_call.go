@@ -35,10 +35,7 @@ func (c *Conn) OriginateCall(ctx context.Context, background bool, aLeg, bLeg Le
 		vars = make(map[string]string)
 	}
 
-	if _, ok := vars["origination_uuid"]; ok {
-		// We cannot set origination uuid globally
-		delete(vars, "origination_uuid")
-	}
+	delete(vars, "origination_uuid")
 
 	response, err := c.SendCommand(ctx, command.API{
 		Command:    "originate",
@@ -64,10 +61,7 @@ func (c *Conn) EnterpriseOriginateCall(ctx context.Context, background bool, var
 		vars = make(map[string]string)
 	}
 
-	if _, ok := vars["origination_uuid"]; ok {
-		// We cannot set origination uuid globally
-		delete(vars, "origination_uuid")
-	}
+	delete(vars, "origination_uuid")
 
 	var aLeg strings.Builder
 	for i, leg := range aLegs {
@@ -95,10 +89,7 @@ func (c *Conn) BackgroundOriginateCall(ctx context.Context, background bool, aLe
 		vars = make(map[string]string)
 	}
 
-	if _, ok := vars["origination_uuid"]; ok {
-		// We cannot set origination uuid globally
-		delete(vars, "origination_uuid")
-	}
+	delete(vars, "origination_uuid")
 
 	response, err := c.SendCommand(ctx, command.API{
 		Command:    "bgapi originate",

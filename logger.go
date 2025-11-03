@@ -5,33 +5,33 @@ import (
 )
 
 type Logger interface {
-	Debug(format string, args ...interface{})
-	Info(format string, args ...interface{})
-	Warn(format string, args ...interface{})
-	Error(format string, args ...interface{})
+	Debugf(format string, args ...any)
+	Infof(format string, args ...any)
+	Warnf(format string, args ...any)
+	Errorf(format string, args ...any)
 }
 
 type NilLogger struct{}
 type NormalLogger struct{}
 
-func (l NormalLogger) Debug(format string, args ...interface{}) {
+func (l NormalLogger) Debugf(format string, args ...any) {
 	log.Print("DEBUG: ")
 	log.Printf(format, args...)
 }
-func (l NormalLogger) Info(format string, args ...interface{}) {
+func (l NormalLogger) Infof(format string, args ...any) {
 	log.Print("INFO: ")
 	log.Printf(format, args...)
 }
-func (l NormalLogger) Warn(format string, args ...interface{}) {
+func (l NormalLogger) Warnf(format string, args ...any) {
 	log.Print("WARN: ")
 	log.Printf(format, args...)
 }
-func (l NormalLogger) Error(format string, args ...interface{}) {
+func (l NormalLogger) Errorf(format string, args ...any) {
 	log.Print("ERROR: ")
 	log.Printf(format, args...)
 }
 
-func (l NilLogger) Debug(string, ...interface{}) {}
-func (l NilLogger) Info(string, ...interface{})  {}
-func (l NilLogger) Warn(string, ...interface{})  {}
-func (l NilLogger) Error(string, ...interface{}) {}
+func (l NilLogger) Debugf(string, ...any) {}
+func (l NilLogger) Infof(string, ...any)  {}
+func (l NilLogger) Warnf(string, ...any)  {}
+func (l NilLogger) Errorf(string, ...any) {}

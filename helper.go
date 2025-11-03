@@ -22,15 +22,20 @@ import (
 	"github.com/percipia/eslgo/command/call"
 )
 
-func (c *Conn) EnableEvents(ctx context.Context) error {
+func (c *Conn) EnableEvents(ctx context.Context, format ...string) error {
 	var err error
+	eventFormat := "plain" // default to plain text
+	if len(format) > 0 && format[0] != "" {
+		eventFormat = format[0]
+	}
+
 	if c.outbound {
 		_, err = c.SendCommand(ctx, command.MyEvents{
-			Format: "plain",
+			Format: eventFormat,
 		})
 	} else {
 		_, err = c.SendCommand(ctx, command.Event{
-			Format: "plain",
+			Format: eventFormat,
 			Listen: []string{"all"},
 		})
 	}
@@ -55,7 +60,7 @@ func (c *Conn) Phrase(ctx context.Context, uuid, macro string, times int, wait b
 }
 
 // PhraseWithArg - Executes the mod_dptools phrase app with arguments
-func (c *Conn) PhraseWithArg(ctx context.Context, uuid, macro string, argument interface{}, times int, wait bool) (*RawResponse, error) {
+func (c *Conn) PhraseWithArg(ctx context.Context, uuid, macro string, argument any, times int, wait bool) (*RawResponse, error) {
 	return c.audioCommand(ctx, "phrase", uuid, fmt.Sprintf("%s,%v", macro, argument), times, wait)
 }
 
