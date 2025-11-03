@@ -18,7 +18,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/percipia/eslgo/command"
+	"github.com/GoingBytes/eslgo/command"
 	"github.com/stretchr/testify/assert"
 )
 

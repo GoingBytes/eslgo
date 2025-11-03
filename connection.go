@@ -20,7 +20,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/percipia/eslgo/command"
+	"github.com/GoingBytes/eslgo/command"
 )
 
 type Conn struct {

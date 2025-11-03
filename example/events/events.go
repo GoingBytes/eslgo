@@ -17,7 +17,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/percipia/eslgo"
+	"github.com/GoingBytes/eslgo"
 )
 
 func main() {

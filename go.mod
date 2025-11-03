@@ -1,4 +1,4 @@
-module github.com/percipia/eslgo
+module github.com/GoingBytes/eslgo
 
 go 1.25.3
 

@@ -13,7 +13,7 @@
 ## Installation
 
 ```bash
-go get github.com/percipia/eslgo
+go get github.com/GoingBytes/eslgo
 ```
 
 The module follows standard Go module semantics, so importing it in your project and executing `go mod tidy` is usually enough.
@@ -31,7 +31,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/percipia/eslgo"
+	"github.com/GoingBytes/eslgo"
 )
 
 func main() {
@@ -65,7 +65,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/percipia/eslgo"
+	"github.com/GoingBytes/eslgo"
 )
 
 func main() {
