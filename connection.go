@@ -15,6 +15,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net"
 	"net/textproto"
 	"sync"
@@ -36,7 +37,7 @@ type Conn struct {
 	eventListeners       map[string]map[string]EventListener
 	eventListenerCounter int
 	outbound             bool
-	logger               Logger
+	logger               *slog.Logger
 	exitTimeout          time.Duration
 	closeOnce            sync.Once
 	closeDelay           time.Duration
@@ -45,14 +46,14 @@ type Conn struct {
 // Options - Generic options for an ESL connection, either inbound or outbound
 type Options struct {
 	Context     context.Context // This specifies the base running context for the connection. If this context expires all connections will be terminated.
-	Logger      Logger          // This specifies the logger to be used for any library internal messages. Can be set to nil to suppress everything.
+	Logger      *slog.Logger    // This specifies the logger to be used for any library internal messages. Can be set to nil to suppress everything.
 	ExitTimeout time.Duration   // How long should we wait for FreeSWITCH to respond to our "exit" command. 5 seconds is a sane default.
 }
 
 // DefaultOptions - The default options used for creating the connection
 var DefaultOptions = Options{
 	Context:     context.Background(),
-	Logger:      NormalLogger{},
+	Logger:      slog.Default(),
 	ExitTimeout: 5 * time.Second,
 }
 
@@ -64,7 +65,7 @@ func newConnection(c net.Conn, outbound bool, opts Options) *Conn {
 
 	// If logger is nil, do not actually output anything
 	if opts.Logger == nil {
-		opts.Logger = NilLogger{}
+		opts.Logger = NewDiscardLogger()
 	}
 
 	runningContext, stop := context.WithCancel(opts.Context)
@@ -277,7 +278,7 @@ func (c *Conn) eventLoop() {
 		c.responseChanMutex.RUnlock()
 
 		if err != nil {
-			c.logger.Warnf("Error parsing event\n%s\n", err.Error())
+			c.logger.Warn("Error parsing event", "error", err.Error())
 			continue
 		}
 
@@ -289,12 +290,12 @@ func (c *Conn) receiveLoop() {
 	for c.runningContext.Err() == nil {
 		err := c.doMessage()
 		if err != nil {
-			c.logger.Warnf("Error receiving message: %s\n", err.Error())
+			c.logger.Warn("Error receiving message", "error", err.Error())
 			// when err.Error() is EOF we should trigger event to responseChannel and exit the loop
 			// because the connection is closed
 			if err.Error() == "EOF" {
 				// send signal to c.responseChannels[TypeDisconnect]
-				c.logger.Warnf("Connection closed, stopping receive loop\n")
+				c.logger.Warn("Connection closed, stopping receive loop")
 				select {
 				case c.responseChannels[TypeDisconnect] <- &RawResponse{
 					Headers: textproto.MIMEHeader{
@@ -339,7 +340,7 @@ func (c *Conn) doMessage() error {
 			return c.runningContext.Err()
 		case <-ctx.Done():
 			// Do not return an error since this is not fatal but log since it could be a indication of problems
-			c.logger.Warnf("No one to handle response\nIs the connection overloaded or stopping?\n%v\n\n", response)
+			c.logger.Warn("No one to handle response - connection may be overloaded or stopping", "response", response)
 		}
 	} else {
 		return errors.New("no response channel for Content-Type: " + response.GetHeader("Content-Type"))

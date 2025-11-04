@@ -53,7 +53,7 @@ func (opts OutboundOptions) ListenAndServe(address string, handler OutboundHandl
 		return err
 	}
 	if opts.Logger != nil {
-		opts.Logger.Infof("Listening for new ESL connections on %s\n", listener.Addr().String())
+		opts.Logger.Info("Listening for new ESL connections", "address", listener.Addr().String())
 	}
 	for {
 		c, err := listener.Accept()
@@ -62,14 +62,14 @@ func (opts OutboundOptions) ListenAndServe(address string, handler OutboundHandl
 		}
 		conn := newConnection(c, true, opts.Options)
 
-		conn.logger.Infof("New outbound connection from %s\n", c.RemoteAddr().String())
+		conn.logger.Info("New outbound connection", "remote_addr", c.RemoteAddr().String())
 		go conn.dummyLoop()
 		// Does not call the handler directly to ensure closing cleanly
 		go conn.outboundHandle(handler, opts.ConnectionDelay, opts.ConnectTimeout)
 	}
 
 	if opts.Logger != nil {
-		opts.Logger.Infof("Outbound server shutting down")
+		opts.Logger.Info("Outbound server shutting down")
 	}
 	return errors.New("connection closed")
 }
@@ -79,7 +79,7 @@ func (c *Conn) outboundHandle(handler OutboundHandler, connectionDelay, connectT
 	response, err := c.SendCommand(ctx, command.Connect{})
 	cancel()
 	if err != nil {
-		c.logger.Warnf("Error connecting to %s error %s", c.conn.RemoteAddr().String(), err.Error())
+		c.logger.Warn("Error connecting", "remote_addr", c.conn.RemoteAddr().String(), "error", err.Error())
 		// Try closing cleanly first
 		c.Close() // Not ExitAndClose since this error connection is most likely from communication failure
 		return
@@ -96,14 +96,14 @@ func (c *Conn) outboundHandle(handler OutboundHandler, connectionDelay, connectT
 func (c *Conn) dummyLoop() {
 	select {
 	case <-c.responseChannels[TypeDisconnect]:
-		c.logger.Infof("Disconnect outbound connection", c.conn.RemoteAddr())
+		c.logger.Info("Disconnect outbound connection", "remote_addr", c.conn.RemoteAddr())
 		if c.closeDelay >= 0 {
 			time.AfterFunc(c.closeDelay*time.Second, func() {
 				c.Close()
 			})
 		}
 	case <-c.responseChannels[TypeAuthRequest]:
-		c.logger.Debugf("Ignoring auth request on outbound connection %s", c.conn.RemoteAddr())
+		c.logger.Debug("Ignoring auth request on outbound connection", "remote_addr", c.conn.RemoteAddr())
 	case <-c.runningContext.Done():
 		return
 	}

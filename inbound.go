@@ -65,7 +65,7 @@ func (opts InboundOptions) Dial(address string) (*Conn, error) {
 		}
 		return nil, err
 	} else {
-		connection.logger.Infof("Successfully authenticated %s\n", connection.conn.RemoteAddr())
+		connection.logger.Info("Successfully authenticated", "remote_addr", connection.conn.RemoteAddr())
 	}
 
 	// Inbound only handlers
@@ -96,12 +96,12 @@ func (c *Conn) authLoop(auth command.Auth, authTimeout time.Duration) {
 			err := c.doAuth(authCtx, auth)
 			cancel()
 			if err != nil {
-				c.logger.Warnf("Failed to auth %e\n", err)
+				c.logger.Warn("Failed to authenticate", "error", err)
 				// Close the connection, we have the wrong password
 				c.ExitAndClose()
 				return
 			} else {
-				c.logger.Infof("Successfully authenticated %s\n", c.conn.RemoteAddr())
+				c.logger.Info("Successfully authenticated", "remote_addr", c.conn.RemoteAddr())
 			}
 		case <-c.runningContext.Done():
 			return

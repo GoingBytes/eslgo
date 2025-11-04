@@ -15,7 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"time"
 
 	"github.com/GoingBytes/eslgo/command"
@@ -44,9 +44,9 @@ func (c *Conn) EnableEvents(ctx context.Context, format ...string) error {
 
 // DebugEvents - A helper that will output all events to a logger
 func (c *Conn) DebugEvents(w io.Writer) string {
-	logger := log.New(w, "EventLog: ", log.LstdFlags|log.Lmsgprefix)
+	logger := slog.New(slog.NewTextHandler(w, nil))
 	return c.RegisterEventListener(EventListenAll, func(event *Event) {
-		logger.Println(event)
+		logger.Info("Event received", "event", event)
 	})
 }
 
