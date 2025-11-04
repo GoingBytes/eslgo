@@ -5,6 +5,7 @@
 `eslgo` is an idiomatic [FreeSWITCH™](https://freeswitch.com/) Event Socket Library for Go. It powers high-volume production systems and provides the primitives needed to originate calls, react to FreeSWITCH events, and build resilient telephony workflows from Go applications.
 
 ## Features
+
 - Inbound ESL client with automatic reconnect hooks and context-aware commands
 - Outbound ESL server for driving FreeSWITCH call-control scripts
 - Event listener registration scoped by `UUID`, `Application-UUID`, `Job-UUID`, or catch-all handlers
@@ -23,6 +24,7 @@ The module follows standard Go module semantics, so importing it in your project
 ## Quick Start
 
 ### Outbound ESL server
+
 Expose an outbound ESL handler that FreeSWITCH can call into:
 
 ```go
@@ -57,6 +59,7 @@ func handleConnection(ctx context.Context, conn *eslgo.Conn, response *eslgo.Raw
 ```
 
 ### Inbound ESL client
+
 Connect to an existing FreeSWITCH instance and issue background jobs:
 
 ```go
@@ -97,12 +100,14 @@ func main() {
 ```
 
 ## Examples
+
 - `example/outbound/`: runnable outbound server sample
 - `example/inbound/`: minimal inbound client
 
 Each example is self-contained and can be executed with `go run ./example/<name>`.
 
 ## Development
+
 - Run the unit tests with `go test ./...`
 - File issues or pull requests if you run into bugs or have feature suggestions
 
