@@ -111,7 +111,7 @@ func (c *Conn) RegisterEventListener(channelUUID string, listener EventListener)
 }
 
 // RemoveEventListener - Removes the listener for the specified channel UUID with the listener ID returned from RegisterEventListener
-func (c *Conn) RemoveEventListener(channelUUID string, id string) {
+func (c *Conn) RemoveEventListener(channelUUID, id string) {
 	c.eventListenerLock.Lock()
 	defer c.eventListenerLock.Unlock()
 
@@ -125,8 +125,8 @@ func (c *Conn) SendCommand(ctx context.Context, cmd command.Command) (*RawRespon
 	if linger, ok := cmd.(command.Linger); ok {
 		c.writeLock.Lock()
 		if linger.Enabled {
-			if linger.Seconds > 0 {
-				c.closeDelay = linger.Seconds
+			if linger.Delay > 0 {
+				c.closeDelay = linger.Delay
 			} else {
 				c.closeDelay = -1
 			}
@@ -263,14 +263,16 @@ func (c *Conn) eventLoop() {
 				c.responseChanMutex.RUnlock()
 				return
 			}
-			event, err = readXMLEvent(raw.Body)
+			event = readXMLEvent(raw.Body)
+			err = nil
 		case raw := <-c.responseChannels[TypeEventJSON]:
 			if raw == nil {
 				// We only get nil here if the channel is closed
 				c.responseChanMutex.RUnlock()
 				return
 			}
-			event, err = readJSONEvent(raw.Body)
+			event = readJSONEvent(raw.Body)
+			err = nil
 		case <-c.runningContext.Done():
 			c.responseChanMutex.RUnlock()
 			return
@@ -322,7 +324,7 @@ func (c *Conn) doMessage() error {
 	c.responseChanMutex.RLock()
 	defer c.responseChanMutex.RUnlock()
 	responseChan, ok := c.responseChannels[response.GetHeader("Content-Type")]
-	if !ok && len(c.responseChannels) <= 0 {
+	if !ok && len(c.responseChannels) == 0 {
 		// We must have shutdown!
 		return errors.New("no response channels")
 	}

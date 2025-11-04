@@ -18,7 +18,7 @@ type Auth struct {
 }
 
 func (auth Auth) BuildMessage() string {
-	if len(auth.User) > 0 {
+	if auth.User != "" {
 		return fmt.Sprintf("userauth %s:%s", auth.User, auth.Password)
 	}
 	return fmt.Sprintf("auth %s", auth.Password)

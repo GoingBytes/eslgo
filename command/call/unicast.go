@@ -47,7 +47,7 @@ func (u Unicast) BuildMessage() string {
 	sendMsg.Headers.Set("remote-ip", remoteHost)
 	sendMsg.Headers.Set("remote-port", remotePort)
 	sendMsg.Headers.Set("transport", u.Local.Network())
-	if len(u.Flags) > 0 {
+	if u.Flags != "" {
 		sendMsg.Headers.Set("flags", u.Flags)
 	}
 	return sendMsg.BuildMessage()

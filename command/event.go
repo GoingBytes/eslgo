@@ -50,7 +50,7 @@ func (e Event) BuildMessage() string {
 }
 
 func (m MyEvents) BuildMessage() string {
-	if len(m.UUID) > 0 {
+	if m.UUID != "" {
 		return fmt.Sprintf("myevents %s %s", m.Format, m.UUID)
 	}
 	return fmt.Sprintf("myevents %s", m.Format)
@@ -69,7 +69,7 @@ func (d DivertEvents) BuildMessage() string {
 
 func (s *SendEvent) BuildMessage() string {
 	// Ensure the correct content length is set in the header
-	if len(s.Body) > 0 {
+	if s.Body != "" {
 		s.Headers.Set("Content-Length", strconv.Itoa(len(s.Body)))
 	} else {
 		delete(s.Headers, "Content-Length")

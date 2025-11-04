@@ -44,7 +44,7 @@ func (c *Conn) readResponse() (*RawResponse, error) {
 		Headers: header,
 	}
 
-	if contentLength := header.Get("Content-Length"); len(contentLength) > 0 {
+	if contentLength := header.Get("Content-Length"); contentLength != "" {
 		length, err := strconv.Atoi(contentLength)
 		if err != nil {
 			return response, err

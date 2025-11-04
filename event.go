@@ -44,7 +44,7 @@ func readPlainEvent(body []byte) (*Event, error) {
 		Headers: headers,
 	}
 
-	if contentLength := headers.Get("Content-Length"); len(contentLength) > 0 {
+	if contentLength := headers.Get("Content-Length"); contentLength != "" {
 		length, err := strconv.Atoi(contentLength)
 		if err != nil {
 			return event, err
@@ -60,18 +60,18 @@ func readPlainEvent(body []byte) (*Event, error) {
 }
 
 // TODO: Needs processing
-func readXMLEvent(_ []byte) (*Event, error) {
+func readXMLEvent(_ []byte) *Event {
 	return &Event{
 		Headers: make(textproto.MIMEHeader),
-	}, nil
+	}
 }
 
 // readJSONEvent reads a JSON formatted event
-func readJSONEvent(body []byte) (*Event, error) {
+func readJSONEvent(body []byte) *Event {
 	return &Event{
 		Headers: make(textproto.MIMEHeader),
 		Body:    body,
-	}, nil
+	}
 }
 
 // GetName Helper function that returns the event name header

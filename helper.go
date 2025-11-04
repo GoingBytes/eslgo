@@ -85,7 +85,7 @@ func (c *Conn) WaitForDTMF(ctx context.Context, uuid string) (byte, error) {
 	listenerID := c.RegisterEventListener(uuid, func(event *Event) {
 		if event.GetName() == "DTMF" {
 			dtmf := event.GetHeader("DTMF-Digit")
-			if len(dtmf) > 0 {
+			if dtmf != "" {
 				select {
 				case done <- dtmf[0]:
 				default:
@@ -116,10 +116,10 @@ func (c *Conn) WaitForDTMF(ctx context.Context, uuid string) (byte, error) {
 }
 
 // Helper for mod_dptools apps since they are very similar in invocation
-func (c *Conn) audioCommand(ctx context.Context, command, uuid, audioArgs string, times int, wait bool) (*RawResponse, error) {
+func (c *Conn) audioCommand(ctx context.Context, appName, uuid, audioArgs string, times int, wait bool) (*RawResponse, error) {
 	response, err := c.SendCommand(ctx, &call.Execute{
 		UUID:    uuid,
-		AppName: command,
+		AppName: appName,
 		AppArgs: audioArgs,
 		Loops:   times,
 		Sync:    wait,
@@ -128,7 +128,7 @@ func (c *Conn) audioCommand(ctx context.Context, command, uuid, audioArgs string
 		return response, err
 	}
 	if !response.IsOk() {
-		return response, errors.New(command + " response is not okay")
+		return response, errors.New(appName + " response is not okay")
 	}
 	return response, nil
 }

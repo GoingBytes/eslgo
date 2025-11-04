@@ -17,13 +17,13 @@ import (
 
 type Linger struct {
 	Enabled bool
-	Seconds time.Duration
+	Delay   time.Duration
 }
 
 func (l Linger) BuildMessage() string {
 	if l.Enabled {
-		if l.Seconds > 0 {
-			return fmt.Sprintf("linger %d", l.Seconds)
+		if l.Delay > 0 {
+			return fmt.Sprintf("linger %d", l.Delay)
 		}
 		return "linger"
 	}

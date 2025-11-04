@@ -46,7 +46,12 @@ func Dial(address, password string, onDisconnect func()) (*Conn, error) {
 
 // Dial - Connects to FreeSWITCH ESL on the address with the provided options. Returns the connection and any errors encountered
 func (opts InboundOptions) Dial(address string) (*Conn, error) {
-	c, err := net.Dial(opts.Network, address)
+	ctx := opts.Context
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	var dialer net.Dialer
+	c, err := dialer.DialContext(ctx, opts.Network, address)
 	if err != nil {
 		return nil, err
 	}

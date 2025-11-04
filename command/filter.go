@@ -20,7 +20,7 @@ type Filter struct {
 
 func (f Filter) BuildMessage() string {
 	if f.Delete {
-		if len(f.FilterValue) > 0 {
+		if f.FilterValue != "" {
 			// Clear just the specific header value
 			return fmt.Sprintf("filter delete %s %s", f.EventHeader, f.FilterValue)
 		}

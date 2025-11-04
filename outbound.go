@@ -48,7 +48,12 @@ func ListenAndServe(address string, handler OutboundHandler) error {
 
 // ListenAndServe - Open a new listener for outbound ESL connections from FreeSWITCH with provided options and handle them with the specified handler
 func (opts OutboundOptions) ListenAndServe(address string, handler OutboundHandler) error {
-	listener, err := net.Listen(opts.Network, address)
+	ctx := opts.Context
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	var listenConfig net.ListenConfig
+	listener, err := listenConfig.Listen(ctx, opts.Network, address)
 	if err != nil {
 		return err
 	}
@@ -79,7 +84,11 @@ func (c *Conn) outboundHandle(handler OutboundHandler, connectionDelay, connectT
 	response, err := c.SendCommand(ctx, command.Connect{})
 	cancel()
 	if err != nil {
-		c.logger.Warn("Error connecting", "remote_addr", c.conn.RemoteAddr().String(), "error", err.Error())
+		c.logger.Warn(
+			"Error connecting",
+			"remote_addr", c.conn.RemoteAddr().String(),
+			"error", err.Error(),
+		)
 		// Try closing cleanly first
 		c.Close() // Not ExitAndClose since this error connection is most likely from communication failure
 		return

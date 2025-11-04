@@ -43,7 +43,7 @@ func (s *SendMessage) BuildMessage() string {
 	}
 
 	// Ensure the correct content length is set in the header
-	if len(s.Body) > 0 {
+	if s.Body != "" {
 		headers = append(headers, "Content-Length: "+strconv.Itoa(len(s.Body)))
 	} else {
 		delete(s.Headers, "Content-Length")
@@ -58,7 +58,7 @@ func (s *SendMessage) BuildMessage() string {
 
 	headerString := strings.Join(headers, "\r\n")
 
-	if len(s.Body) > 0 {
+	if s.Body != "" {
 		return fmt.Sprintf("sendmsg %s\r\n%s\r\n\r\n%s", s.UUID, headerString, s.Body)
 	}
 	return fmt.Sprintf("sendmsg %s\r\n%s", s.UUID, headerString)
