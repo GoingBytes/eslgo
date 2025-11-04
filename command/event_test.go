@@ -11,9 +11,10 @@
 package command
 
 import (
-	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var TestSendEventMessage = strings.ReplaceAll(`sendevent MESSAGE_WAITING

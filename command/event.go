@@ -52,7 +52,6 @@ func (e Event) BuildMessage() string {
 func (m MyEvents) BuildMessage() string {
 	if len(m.UUID) > 0 {
 		return fmt.Sprintf("myevents %s %s", m.Format, m.UUID)
-
 	}
 	return fmt.Sprintf("myevents %s", m.Format)
 }

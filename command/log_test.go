@@ -11,8 +11,9 @@
 package command
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLog_BuildMessage(t *testing.T) {
